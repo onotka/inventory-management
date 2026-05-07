@@ -5,76 +5,150 @@
       <p>{{ t('orders.description') }}</p>
     </div>
 
+    <div class="view-toggle">
+      <button :class="['view-toggle-btn', { active: viewMode === 'customer' }]" @click="viewMode = 'customer'">
+        {{ t('orders.viewToggle.customer') }}
+      </button>
+      <button :class="['view-toggle-btn', { active: viewMode === 'submitted' }]" @click="viewMode = 'submitted'">
+        {{ t('orders.viewToggle.submitted') }} ({{ submittedOrders.length }})
+      </button>
+    </div>
+
     <div v-if="loading" class="loading">{{ t('common.loading') }}</div>
     <div v-else-if="error" class="error">{{ error }}</div>
-    <div v-else>
-      <div class="stats-grid">
-        <div class="stat-card success">
-          <div class="stat-label">{{ t('status.delivered') }}</div>
-          <div class="stat-value">{{ getOrdersByStatus('Delivered').length }}</div>
+    <template v-else>
+      <template v-if="viewMode === 'customer'">
+        <div class="stats-grid">
+          <div class="stat-card success">
+            <div class="stat-label">{{ t('status.delivered') }}</div>
+            <div class="stat-value">{{ getOrdersByStatus('Delivered').length }}</div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-label">{{ t('status.shipped') }}</div>
+            <div class="stat-value">{{ getOrdersByStatus('Shipped').length }}</div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-label">{{ t('status.processing') }}</div>
+            <div class="stat-value">{{ getOrdersByStatus('Processing').length }}</div>
+          </div>
+          <div class="stat-card danger">
+            <div class="stat-label">{{ t('status.backordered') }}</div>
+            <div class="stat-value">{{ getOrdersByStatus('Backordered').length }}</div>
+          </div>
         </div>
-        <div class="stat-card info">
-          <div class="stat-label">{{ t('status.shipped') }}</div>
-          <div class="stat-value">{{ getOrdersByStatus('Shipped').length }}</div>
-        </div>
-        <div class="stat-card warning">
-          <div class="stat-label">{{ t('status.processing') }}</div>
-          <div class="stat-value">{{ getOrdersByStatus('Processing').length }}</div>
-        </div>
-        <div class="stat-card danger">
-          <div class="stat-label">{{ t('status.backordered') }}</div>
-          <div class="stat-value">{{ getOrdersByStatus('Backordered').length }}</div>
-        </div>
-      </div>
 
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">{{ t('orders.allOrders') }} ({{ orders.length }})</h3>
-        </div>
-        <div class="table-container">
-          <table class="orders-table">
-            <thead>
-              <tr>
-                <th class="col-order-number">{{ t('orders.table.orderNumber') }}</th>
-                <th class="col-customer">{{ t('orders.table.customer') }}</th>
-                <th class="col-items">{{ t('orders.table.items') }}</th>
-                <th class="col-status">{{ t('orders.table.status') }}</th>
-                <th class="col-date">{{ t('orders.table.orderDate') }}</th>
-                <th class="col-date">{{ t('orders.table.expectedDelivery') }}</th>
-                <th class="col-value">{{ t('orders.table.totalValue') }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="order in orders" :key="order.id">
-                <td class="col-order-number"><strong>{{ order.order_number }}</strong></td>
-                <td class="col-customer">{{ translateCustomerName(order.customer) }}</td>
-                <td class="col-items">
-                  <details class="items-details">
-                    <summary class="items-summary">
-                      {{ t('orders.itemsCount', { count: order.items.length }) }}
-                    </summary>
-                    <div class="items-dropdown">
-                      <div v-for="(item, idx) in order.items" :key="idx" class="item-entry">
-                        <span class="item-name">{{ translateProductName(item.name) }}</span>
-                        <span class="item-meta">{{ t('orders.quantity') }}: {{ item.quantity }} @ {{ currencySymbol }}{{ item.unit_price }}</span>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">{{ t('orders.allOrders') }} ({{ orders.length }})</h3>
+          </div>
+          <div class="table-container">
+            <table class="orders-table">
+              <thead>
+                <tr>
+                  <th class="col-order-number">{{ t('orders.table.orderNumber') }}</th>
+                  <th class="col-customer">{{ t('orders.table.customer') }}</th>
+                  <th class="col-items">{{ t('orders.table.items') }}</th>
+                  <th class="col-status">{{ t('orders.table.status') }}</th>
+                  <th class="col-date">{{ t('orders.table.orderDate') }}</th>
+                  <th class="col-date">{{ t('orders.table.expectedDelivery') }}</th>
+                  <th class="col-value">{{ t('orders.table.totalValue') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="order in orders" :key="order.id">
+                  <td class="col-order-number"><strong>{{ order.order_number }}</strong></td>
+                  <td class="col-customer">{{ translateCustomerName(order.customer) }}</td>
+                  <td class="col-items">
+                    <details class="items-details">
+                      <summary class="items-summary">
+                        {{ t('orders.itemsCount', { count: order.items.length }) }}
+                      </summary>
+                      <div class="items-dropdown">
+                        <div v-for="(item, idx) in order.items" :key="idx" class="item-entry">
+                          <span class="item-name">{{ translateProductName(item.name) }}</span>
+                          <span class="item-meta">{{ t('orders.quantity') }}: {{ item.quantity }} @ {{ currencySymbol }}{{ item.unit_price }}</span>
+                        </div>
                       </div>
-                    </div>
-                  </details>
-                </td>
-                <td class="col-status">
-                  <span :class="['badge', getOrderStatusClass(order.status)]">
-                    {{ t(`status.${order.status.toLowerCase()}`) }}
-                  </span>
-                </td>
-                <td class="col-date">{{ formatDate(order.order_date) }}</td>
-                <td class="col-date">{{ formatDate(order.expected_delivery) }}</td>
-                <td class="col-value"><strong>{{ currencySymbol }}{{ order.total_value.toLocaleString() }}</strong></td>
-              </tr>
-            </tbody>
-          </table>
+                    </details>
+                  </td>
+                  <td class="col-status">
+                    <span :class="['badge', getOrderStatusClass(order.status)]">
+                      {{ t(`status.${order.status.toLowerCase()}`) }}
+                    </span>
+                  </td>
+                  <td class="col-date">{{ formatDate(order.order_date) }}</td>
+                  <td class="col-date">{{ formatDate(order.expected_delivery) }}</td>
+                  <td class="col-value"><strong>{{ currencySymbol }}{{ order.total_value.toLocaleString() }}</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-    </div>
+      </template>
+
+      <template v-else-if="viewMode === 'submitted'">
+        <div v-if="submittedLoading" class="loading">{{ t('common.loading') }}</div>
+        <template v-else>
+          <div class="stats-grid">
+            <div class="stat-card info">
+              <div class="stat-label">{{ t('orders.submitted.totalCount') }}</div>
+              <div class="stat-value">{{ submittedOrders.length }}</div>
+            </div>
+            <div class="stat-card success">
+              <div class="stat-label">{{ t('orders.submitted.totalValue') }}</div>
+              <div class="stat-value">{{ currencySymbol }}{{ submittedTotalValue.toLocaleString() }}</div>
+            </div>
+            <div class="stat-card warning">
+              <div class="stat-label">{{ t('orders.submitted.soonestDelivery') }}</div>
+              <div class="stat-value">{{ soonestDelivery ? formatDate(soonestDelivery) : '—' }}</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">{{ t('orders.submitted.title') }} ({{ submittedOrders.length }})</h3>
+            </div>
+            <div v-if="!submittedOrders.length" class="empty-state">{{ t('orders.submitted.empty') }}</div>
+            <div v-else class="table-container">
+              <table class="orders-table">
+                <thead>
+                  <tr>
+                    <th class="col-order-number">{{ t('orders.submittedTable.orderNumber') }}</th>
+                    <th class="col-items">{{ t('orders.submittedTable.items') }}</th>
+                    <th class="col-status">{{ t('orders.submittedTable.status') }}</th>
+                    <th class="col-date">{{ t('orders.submittedTable.orderDate') }}</th>
+                    <th class="col-date">{{ t('orders.submittedTable.expectedDelivery') }}</th>
+                    <th class="col-lead">{{ t('orders.submittedTable.leadTime') }}</th>
+                    <th class="col-value">{{ t('orders.submittedTable.totalValue') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="order in submittedOrders" :key="order.id">
+                    <td><strong>{{ order.order_number }}</strong></td>
+                    <td>
+                      <details class="items-details">
+                        <summary class="items-summary">{{ t('orders.itemsCount', { count: order.items.length }) }}</summary>
+                        <div class="items-dropdown">
+                          <div v-for="(item, idx) in order.items" :key="idx" class="item-entry">
+                            <span class="item-name">{{ translateProductName(item.name) }}</span>
+                            <span class="item-meta">{{ t('orders.quantity') }}: {{ item.quantity }} @ {{ currencySymbol }}{{ item.unit_price.toFixed(2) }} · {{ item.lead_days }} {{ t('orders.submittedTable.days') }}</span>
+                          </div>
+                        </div>
+                      </details>
+                    </td>
+                    <td><span :class="['badge', getOrderStatusClass(order.status)]">{{ t(`status.${order.status.toLowerCase()}`) }}</span></td>
+                    <td>{{ formatDate(order.order_date) }}</td>
+                    <td>{{ formatDate(order.expected_delivery) }}</td>
+                    <td>{{ leadTimeDays(order) }} {{ t('orders.submittedTable.days') }}</td>
+                    <td><strong>{{ currencySymbol }}{{ order.total_value.toLocaleString() }}</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </template>
+      </template>
+    </template>
   </div>
 </template>
 
@@ -95,6 +169,11 @@ export default {
     const loading = ref(true)
     const error = ref(null)
     const orders = ref([])
+
+    // View toggle
+    const viewMode = ref('customer')
+    const submittedOrders = ref([])
+    const submittedLoading = ref(false)
 
     // Use shared filters
     const {
@@ -124,10 +203,24 @@ export default {
       }
     }
 
-    // Watch for filter changes and reload data
+    const loadSubmittedOrders = async () => {
+      try {
+        submittedLoading.value = true
+        submittedOrders.value = await api.getSubmittedOrders()
+      } catch (err) {
+        error.value = 'Failed to load submitted orders: ' + err.message
+      } finally {
+        submittedLoading.value = false
+      }
+    }
+
+    // Watch for filter changes and reload customer orders
     watch([selectedPeriod, selectedLocation, selectedCategory, selectedStatus], () => {
       loadOrders()
     })
+
+    // Watch viewMode to load submitted orders on demand
+    watch(viewMode, (m) => { if (m === 'submitted') loadSubmittedOrders() })
 
     const getOrdersByStatus = (status) => {
       return orders.value.filter(order => order.status === status)
@@ -138,7 +231,8 @@ export default {
         'Delivered': 'success',
         'Shipped': 'info',
         'Processing': 'warning',
-        'Backordered': 'danger'
+        'Backordered': 'danger',
+        'Submitted': 'info'
       }
       return statusMap[status] || 'info'
     }
@@ -153,19 +247,42 @@ export default {
       })
     }
 
-    onMounted(loadOrders)
+    // Submitted orders computed properties
+    const submittedTotalValue = computed(() =>
+      submittedOrders.value.reduce((s, o) => s + o.total_value, 0)
+    )
+
+    const soonestDelivery = computed(() => {
+      if (!submittedOrders.value.length) return null
+      const dates = submittedOrders.value.map(o => new Date(o.expected_delivery))
+      return new Date(Math.min(...dates))
+    })
+
+    const leadTimeDays = (order) => Math.max(...order.items.map(i => i.lead_days))
+
+    onMounted(() => {
+      loadOrders()
+      loadSubmittedOrders()
+    })
 
     return {
       t,
       loading,
       error,
       orders,
+      viewMode,
+      submittedOrders,
+      submittedLoading,
+      submittedTotalValue,
+      soonestDelivery,
+      leadTimeDays,
       getOrdersByStatus,
       getOrderStatusClass,
       formatDate,
       currencySymbol,
       translateProductName,
-      translateCustomerName
+      translateCustomerName,
+      loadSubmittedOrders
     }
   }
 }
@@ -201,6 +318,10 @@ export default {
 
 .col-value {
   width: 120px;
+}
+
+.col-lead {
+  width: 100px;
 }
 
 /* Items details styling */
@@ -274,6 +395,45 @@ export default {
 
 .item-meta {
   font-size: 0.813rem;
+  color: #64748b;
+}
+
+/* View toggle segmented control */
+.view-toggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.view-toggle-btn {
+  border: none;
+  background: transparent;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: #64748b;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 0.875rem;
+}
+
+.view-toggle-btn:hover {
+  color: #0f172a;
+}
+
+.view-toggle-btn.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 2.5rem;
   color: #64748b;
 }
 </style>

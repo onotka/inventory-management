@@ -4,6 +4,8 @@ export default {
     overview: '概要',
     inventory: '在庫',
     orders: '注文',
+    // TODO: translate restocking and other restocking.* keys
+    restocking: 'Restocking',
     finance: '財務',
     demandForecast: '需要予測',
     companyName: '触媒コンポーネンツ',
@@ -112,6 +114,28 @@ export default {
     onTimeDelivery: '定時配達',
     itemsCount: '{count}件',
     quantity: '数量',
+    // TODO: translate viewToggle.* / submitted.* / submittedTable.*
+    viewToggle: {
+      customer: 'Customer Orders',
+      submitted: 'Submitted Orders'
+    },
+    submitted: {
+      title: 'Submitted Restocking Orders',
+      empty: 'No submitted restocking orders yet. Place one from the Restocking tab.',
+      totalCount: 'Submitted Orders',
+      totalValue: 'Total Submitted Value',
+      soonestDelivery: 'Soonest Delivery'
+    },
+    submittedTable: {
+      orderNumber: 'Order Number',
+      items: 'Items',
+      status: 'Status',
+      orderDate: 'Order Date',
+      expectedDelivery: 'Expected Delivery',
+      leadTime: 'Lead Time',
+      totalValue: 'Total Value',
+      days: 'days'
+    },
     table: {
       orderNumber: '注文番号',
       orderId: '注文ID',
@@ -126,6 +150,31 @@ export default {
       status: 'ステータス',
       expectedDelivery: '予定配達日',
       actualDelivery: '実際の配達日'
+    }
+  },
+
+  // Restocking — TODO: translate
+  restocking: {
+    title: 'Restocking Recommendations',
+    description: 'Set your available budget to get smart restocking suggestions based on demand forecasts.',
+    budgetLabel: 'Available Budget',
+    budgetHint: 'Drag the slider to adjust your budget. Recommendations update automatically.',
+    recommendedItems: 'Recommended Items',
+    totalCost: 'Recommended Total',
+    budgetRemaining: 'Budget Remaining',
+    placeOrder: 'Place Order',
+    placing: 'Submitting…',
+    successCreated: 'Order {orderNumber} submitted. Expected delivery: {expectedDelivery}.',
+    noRecommendations: 'Budget too low for any increasing-trend item. Try increasing it.',
+    table: {
+      sku: 'SKU',
+      name: 'Item',
+      trend: 'Trend',
+      currentDemand: 'Current Demand',
+      forecastedDemand: 'Forecasted Demand',
+      quantity: 'Recommended Qty',
+      unitPrice: 'Unit Price',
+      lineCost: 'Line Cost'
     }
   },
 
@@ -204,6 +253,8 @@ export default {
     shipped: '出荷済み',
     processing: '処理中',
     backordered: 'バックオーダー',
+    // TODO: translate
+    submitted: 'Submitted',
     inStock: '在庫あり',
     lowStock: '在庫僅少',
     adequate: '適量'
