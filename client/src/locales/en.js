@@ -4,6 +4,7 @@ export default {
     overview: 'Overview',
     inventory: 'Inventory',
     orders: 'Orders',
+    restocking: 'Restocking',
     finance: 'Finance',
     demandForecast: 'Demand Forecast',
     companyName: 'Catalyst Components',
@@ -112,6 +113,27 @@ export default {
     onTimeDelivery: 'On-Time Delivery',
     itemsCount: '{count} items',
     quantity: 'Qty',
+    viewToggle: {
+      customer: 'Customer Orders',
+      submitted: 'Submitted Orders'
+    },
+    submitted: {
+      title: 'Submitted Restocking Orders',
+      empty: 'No submitted restocking orders yet. Place one from the Restocking tab.',
+      totalCount: 'Submitted Orders',
+      totalValue: 'Total Submitted Value',
+      soonestDelivery: 'Soonest Delivery'
+    },
+    submittedTable: {
+      orderNumber: 'Order Number',
+      items: 'Items',
+      status: 'Status',
+      orderDate: 'Order Date',
+      expectedDelivery: 'Expected Delivery',
+      leadTime: 'Lead Time',
+      totalValue: 'Total Value',
+      days: 'days'
+    },
     table: {
       orderNumber: 'Order Number',
       orderId: 'Order ID',
@@ -126,6 +148,31 @@ export default {
       status: 'Status',
       expectedDelivery: 'Expected Delivery',
       actualDelivery: 'Actual Delivery'
+    }
+  },
+
+  // Restocking
+  restocking: {
+    title: 'Restocking Recommendations',
+    description: 'Set your available budget to get smart restocking suggestions based on demand forecasts.',
+    budgetLabel: 'Available Budget',
+    budgetHint: 'Drag the slider to adjust your budget. Recommendations update automatically.',
+    recommendedItems: 'Recommended Items',
+    totalCost: 'Recommended Total',
+    budgetRemaining: 'Budget Remaining',
+    placeOrder: 'Place Order',
+    placing: 'Submitting…',
+    successCreated: 'Order {orderNumber} submitted. Expected delivery: {expectedDelivery}.',
+    noRecommendations: 'Budget too low for any increasing-trend item. Try increasing it.',
+    table: {
+      sku: 'SKU',
+      name: 'Item',
+      trend: 'Trend',
+      currentDemand: 'Current Demand',
+      forecastedDemand: 'Forecasted Demand',
+      quantity: 'Recommended Qty',
+      unitPrice: 'Unit Price',
+      lineCost: 'Line Cost'
     }
   },
 
@@ -204,6 +251,7 @@ export default {
     shipped: 'Shipped',
     processing: 'Processing',
     backordered: 'Backordered',
+    submitted: 'Submitted',
     inStock: 'In Stock',
     lowStock: 'Low Stock',
     adequate: 'Adequate'
